@@ -1,0 +1,13 @@
+# 비밀 키 (절대 올리지 않기!)
+.env
+.streamlit/secrets.toml
+
+# 설치 폴더, 캐시
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# 데이터: 미리 만든 검색 색인(data/chroma)만 올리고 나머지는 제외
+data/*
+!data/chroma/

@@ -1,0 +1,12 @@
+# 배포(Streamlit Community Cloud)용 가벼운 설치 목록. 임베딩 모델(torch, sentence-transformers)은 뺐다.
+anthropic==2.3.0
+chromadb==1.5.9
+rank-bm25==0.2.2
+beautifulsoup4>=4.12
+lxml>=5.0
+requests>=2.31
+python-dotenv>=1.0
+streamlit==1.66.1
+pandas
+numpy
+markdown-it-py

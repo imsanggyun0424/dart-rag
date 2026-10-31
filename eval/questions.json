@@ -1,0 +1,42 @@
+[
+  {
+    "question": "주요 제품별 매출 비중은 어떻게 돼?",
+    "expect_section": "주요 제품",
+    "expect_answer": []
+  },
+  {
+    "question": "연구개발비는 매출액 대비 몇 퍼센트야?",
+    "expect_section": "연구개발",
+    "expect_answer": []
+  },
+  {
+    "question": "진행 중인 소송이나 우발부채가 있어?",
+    "expect_section": "우발부채",
+    "expect_answer": []
+  },
+  {
+    "question": "최대주주는 누구고 지분율은 얼마야?",
+    "expect_section": "주주",
+    "expect_answer": []
+  },
+  {
+    "question": "배당은 주당 얼마 했어?",
+    "expect_section": "배당",
+    "expect_answer": []
+  },
+  {
+    "question": "주요 원재료와 가격 변동 추이는?",
+    "expect_section": "원재료",
+    "expect_answer": []
+  },
+  {
+    "question": "직원 수와 평균 급여는?",
+    "expect_section": "직원",
+    "expect_answer": []
+  },
+  {
+    "question": "감사인은 누구고 감사의견은 뭐야?",
+    "expect_section": "감사",
+    "expect_answer": []
+  }
+]

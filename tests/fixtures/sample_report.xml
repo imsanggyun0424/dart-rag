@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DOCUMENT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<DOCUMENT-NAME ACODE="11011">사업보고서</DOCUMENT-NAME>
+<FORMULA-VERSION ADATE="20240101">5.4</FORMULA-VERSION>
+<COMPANY-NAME AREGCIK="00999999">가상전자주식회사</COMPANY-NAME>
+<SUMMARY><EXTRACTION ACODE="FYE">12</EXTRACTION></SUMMARY>
+<BODY>
+<COVER><COVER-TITLE>사 업 보 고 서</COVER-TITLE></COVER>
+<SECTION-1 ACLASS="MANDATORY" APARTSOURCE="SOURCE">
+<TITLE ATOC="Y" AASSOCNOTE="D-0-1-0-0">I. 회사의 개요</TITLE>
+<SECTION-2 ACLASS="MANDATORY">
+<TITLE ATOC="Y" AASSOCNOTE="D-0-1-1-0">1. 회사의 개요</TITLE>
+<P>당사는 1990년에 설립되어 반도체 메모리와 디스플레이 패널을 주력으로 생산하는 기업입니다. 본사는 경기도 수원시에 있습니다.</P>
+<P>당사는 R&amp;D 중심의 경영을 추구하고 있으며, 2025년 기준 연결대상 종속회사는 12개입니다.</P>
+</SECTION-2>
+</SECTION-1>
+<SECTION-1 ACLASS="MANDATORY">
+<TITLE ATOC="Y" AASSOCNOTE="D-0-2-0-0">II. 사업의 내용</TITLE>
+<SECTION-2 ACLASS="MANDATORY">
+<TITLE ATOC="Y" AASSOCNOTE="D-0-2-1-0">1. 사업의 개요</TITLE>
+<P>당사의 사업부문은 메모리 부문과 디스플레이 부문으로 구분됩니다. 2025년 메모리 부문은 AI 서버용 고대역폭메모리(HBM) 수요 증가로 매출이 크게 늘었습니다.</P>
+<P>반면 디스플레이 부문은 스마트폰 수요 둔화와 중국 업체와의 가격 경쟁 심화로 매출이 감소하였습니다.</P>
+</SECTION-2>
+<SECTION-2 ACLASS="MANDATORY">
+<TITLE ATOC="Y" AASSOCNOTE="D-0-2-2-0">2. 주요 제품 및 서비스</TITLE>
+<P>(단위 : 백만원, %)</P>
+<TABLE BORDER="1" WIDTH="600">
+<THEAD><TR><TH>사업부문</TH><TH>주요제품</TH><TH>매출액</TH><TH>비중</TH></TR></THEAD>
+<TBODY>
+<TR><TD>메모리</TD><TD>DRAM, HBM, NAND</TD><TE ALIGN="RIGHT">8,520,000</TE><TE ALIGN="RIGHT">71.0</TE></TR>
+<TR><TD>디스플레이</TD><TD>OLED 패널</TD><TE ALIGN="RIGHT">3,480,000</TE><TE ALIGN="RIGHT">29.0</TE></TR>
+<TR><TD>합계</TD><TD>-</TD><TE ALIGN="RIGHT">12,000,000</TE><TE ALIGN="RIGHT">100.0</TE></TR>
+</TBODY>
+</TABLE>
+</SECTION-2>
+<SECTION-2 ACLASS="MANDATORY">
+<TITLE ATOC="Y" AASSOCNOTE="D-0-2-6-0">6. 연구개발활동</TITLE>
+<P>당사는 차세대 HBM4 및 저전력 DRAM 개발을 위해 연구개발에 지속적으로 투자하고 있습니다.</P>
+<TABLE><TBODY>
+<TR><TU>구분</TU><TU>2025년</TU><TU>2024년</TU></TR>
+<TR><TD>연구개발비용 계</TD><TE>1,320,000</TE><TE>1,150,000</TE></TR>
+<TR><TD>연구개발비 / 매출액 비율</TD><TE>11.0%</TE><TE>10.5%</TE></TR>
+</TBODY></TABLE>
+</SECTION-2>
+</SECTION-1>
+<SECTION-1 ACLASS="MANDATORY">
+<TITLE ATOC="Y">XI. 그 밖에 투자자 보호를 위하여 필요한 사항</TITLE>
+<SECTION-2>
+<TITLE ATOC="Y">2. 우발부채 등에 관한 사항</TITLE>
+<P>당사는 2024년 미국 특허관리전문회사(NPE)로부터 메모리 컨트롤러 관련 특허침해 소송을 제기받았으며, 소송가액은 약 350억원입니다. 현재 1심이 진행 중이며 결과를 예측할 수 없습니다.</P>
+</SECTION-2>
+</SECTION-1>
+</BODY>
+</DOCUMENT>
