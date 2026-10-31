@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 from markdown_it import MarkdownIt
 
-from .rag import DartRAG, cited_numbers, format_sources
+from .rag import DartRAG, cited_numbers, format_sources, system_prompt
 from .usage import Usage
 
 # (항목 이름, 검색어)
@@ -79,7 +79,7 @@ def gather(rag: DartRAG, company: str, rcept_no: str, per_aspect: int = 2) -> li
     return out
 
 
-def compare(rag: DartRAG, targets: list[dict], fin_texts: list[str]) -> Analysis:
+def compare(rag: DartRAG, targets: list[dict], fin_texts: list[str], easy: bool = False) -> Analysis:
     """targets: [{"company":..., "rcept_no":...}, ...]"""
     with rag.tracker.track() as u:
         hits = []
@@ -88,16 +88,18 @@ def compare(rag: DartRAG, targets: list[dict], fin_texts: list[str]) -> Analysis
         task = COMPARE_TASK.format(companies=", ".join(t["company"] for t in targets),
                                    aspects=", ".join(a for a, _ in ASPECTS))
         prompt = f"<financials>\n{chr(10).join(fin_texts)}\n</financials>\n\n{format_sources(hits)}\n\n{task}"
-        text = rag.complete([{"role": "user", "content": prompt}], COMPARE_SYSTEM, max_tokens=3000)
+        text = rag.complete([{"role": "user", "content": prompt}], system_prompt(easy, COMPARE_SYSTEM),
+                            max_tokens=3000)
     return Analysis(text, hits, u, cited_numbers(text, len(hits)))
 
 
-def report(rag: DartRAG, company: str, rcept_no: str, fin_text: str) -> Analysis:
+def report(rag: DartRAG, company: str, rcept_no: str, fin_text: str, easy: bool = False) -> Analysis:
     with rag.tracker.track() as u:
         hits = gather(rag, company, rcept_no, per_aspect=3)
         prompt = (f"<financials>\n{fin_text}\n</financials>\n\n{format_sources(hits)}\n\n"
                   + REPORT_TASK.format(company=company))
-        text = rag.complete([{"role": "user", "content": prompt}], COMPARE_SYSTEM, max_tokens=4000)
+        text = rag.complete([{"role": "user", "content": prompt}], system_prompt(easy, COMPARE_SYSTEM),
+                            max_tokens=4000)
     return Analysis(text, hits, u, cited_numbers(text, len(hits)))
 
 

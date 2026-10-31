@@ -8,6 +8,7 @@ import streamlit as st
 from src import config, feedback, guard
 from src.analysis import compare, report, to_html
 from src.dart_client import DartClient, DartError
+from src.easy import find_terms
 from src.financials import fmt_krw, get_financials, to_text
 from src.ingest import ingest_company
 from src.rag import DartRAG, cited_numbers
@@ -112,8 +113,32 @@ def show_sources(sources: list[dict], answer: str):
             st.text(body[:600] + ("..." if len(body) > 600 else ""))
 
 
+def show_terms(text: str):
+    """답변에 나온 어려운 용어 풀이 (쉬운 말 모드에서만, 미리 만든 사전 사용 → 추가 비용 없음)"""
+    if not ss.get("easy_mode"):
+        return
+    terms = find_terms(text)
+    if terms:
+        with st.expander(f"📖 용어 풀이 ({len(terms)}개)"):
+            for t, d in terms:
+                st.markdown(f"**{t}**: {d}")
+
+
 # ---------------- 사이드바 ----------------
 with st.sidebar:
+    st.header("👀 보기 설정")
+    easy = st.toggle("쉬운 말 모드", value=True, key="easy_mode",
+                     help="어려운 용어를 풀어서, 짧은 문장으로, 큰 숫자는 '조·억 원'으로 바꿔서 답해요. 끝에 한 줄 정리와 용어 풀이가 붙어요.")
+    big = st.toggle("큰 글씨", value=False, key="big_font")
+    if big:
+        st.markdown("""<style>
+        [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] li,
+        [data-testid="stMarkdownContainer"] td, [data-testid="stMarkdownContainer"] th,
+        [data-testid="stChatInput"] textarea, .stButton button p {font-size: 1.3rem !important; line-height: 1.8 !important;}
+        [data-testid="stMetricValue"] {font-size: 2.4rem !important;}
+        </style>""", unsafe_allow_html=True)
+
+    st.divider()
     st.header("📥 공시 수집")
     missing = [k for k, v in {"DART_API_KEY": config.DART_API_KEY,
                               "ANTHROPIC_API_KEY": config.ANTHROPIC_API_KEY}.items() if not v]
@@ -185,8 +210,10 @@ def _save_feedback(i: int):
 
 
 with tab_chat:
-    examples = ["주요 제품별 매출 비중은?", "올해 영업이익이 변한 이유는?", "진행 중인 소송이나 우발채무가 있어?",
-                "연구개발비는 매출 대비 몇 %야?"]
+    examples = (["이 회사는 뭘 팔아서 돈을 벌어?", "요즘 돈을 잘 벌고 있어?", "조심해야 할 위험은 뭐가 있어?",
+                 "배당금은 얼마나 줘?"] if easy else
+                ["주요 제품별 매출 비중은?", "올해 영업이익이 변한 이유는?", "진행 중인 소송이나 우발채무가 있어?",
+                 "연구개발비는 매출 대비 몇 %야?"])
     cols = st.columns(len(examples))
     clicked = next((q for c, q in zip(cols, examples) if c.button(q, width="stretch")), None)
 
@@ -198,6 +225,7 @@ with tab_chat:
                 if msg["role"] == "assistant":
                     if msg.get("sources"):
                         show_sources(msg["sources"], msg["content"])
+                    show_terms(msg["content"])
                     c_a, c_b = st.columns([1, 5])
                     with c_a:
                         st.feedback("thumbs", key=f"fb_{i}", on_change=_save_feedback, args=(i,),
@@ -218,7 +246,7 @@ with tab_chat:
                     with st.spinner("공시 검색 중..."):
                         search_q, hits = rag.retrieve(question, history, scope, top_k)
                     if hits:
-                        answer = st.write_stream(rag.stream(question, hits, history))
+                        answer = st.write_stream(rag.stream(question, hits, history, easy=easy))
                     else:
                         answer = "관련된 공시 내용을 찾지 못했습니다."
                         st.markdown(answer)
@@ -291,7 +319,8 @@ with tab_cmp:
                 dfs[c] = d
                 texts.append(to_text(d, c, b))
             with st.spinner("회사별 공시를 모아 비교하는 중... (30초~1분)"):
-                res = compare(get_rag(), [{"company": c, "rcept_no": latest[c]["rcept_no"]} for c in sel], texts)
+                res = compare(get_rag(), [{"company": c, "rcept_no": latest[c]["rcept_no"]} for c in sel], texts,
+                              easy=easy)
             ss.compare_result = {"companies": sel, "res": res, "dfs": dfs}
             ss.total_usage.merge(res.usage)
 
@@ -306,6 +335,7 @@ with tab_cmp:
                 st.line_chart(margin, height=240)
             st.markdown(res.text)
             show_sources(res.sources, res.text)
+            show_terms(res.text)
             st.caption(res.usage.summary())
 
 # ===== 📄 요약 리포트 =====
@@ -317,7 +347,7 @@ with tab_rep:
         if st.button("📄 리포트 만들기", type="primary") and allow_claude():
             d, b = fin_or_none(comp, annual_year(latest[comp]["doc_name"]))
             with st.spinner("공시를 읽고 리포트를 쓰는 중... (30초~1분)"):
-                res = report(get_rag(), comp, latest[comp]["rcept_no"], to_text(d, comp, b))
+                res = report(get_rag(), comp, latest[comp]["rcept_no"], to_text(d, comp, b), easy=easy)
             ss.report_results[comp] = res
             ss.total_usage.merge(res.usage)
 
@@ -328,4 +358,5 @@ with tab_rep:
                                file_name=f"{comp}_기업요약.html", mime="text/html")
             st.markdown(res.text)
             show_sources(res.sources, res.text)
+            show_terms(res.text)
             st.caption(res.usage.summary())

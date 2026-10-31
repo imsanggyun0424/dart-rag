@@ -8,6 +8,7 @@ from typing import Iterator
 import anthropic
 
 from . import config
+from .easy import EASY_INSTRUCTIONS
 from .store import HybridStore
 from .usage import Usage, UsageTracker
 
@@ -52,6 +53,10 @@ def format_sources(hits: list[dict], start: int = 1) -> str:
     return "<sources>\n" + "\n".join(parts) + "\n</sources>"
 
 
+def system_prompt(easy: bool = False, base: str = SYSTEM_PROMPT) -> str:
+    return base + ("\n" + EASY_INSTRUCTIONS if easy else "")
+
+
 def cited_numbers(text: str, n: int) -> list[int]:
     return sorted({int(x) for x in re.findall(r"\[(\d+)\]", text) if 1 <= int(x) <= n})
 
@@ -94,17 +99,18 @@ class DartRAG:
         return msgs
 
     def answer(self, question: str, history: list[dict] | None = None,
-               rcept_nos: list[str] | None = None, k: int = config.TOP_K) -> Answer:
+               rcept_nos: list[str] | None = None, k: int = config.TOP_K, easy: bool = False) -> Answer:
         with self.tracker.track() as u:
             q, hits = self.retrieve(question, history, rcept_nos, k)
             if not hits:
                 return Answer("검색된 공시가 없습니다. 먼저 보고서를 수집해 주세요.", [], q, usage=u)
-            text = self.complete(self._messages(question, hits, history or []), SYSTEM_PROMPT)
+            text = self.complete(self._messages(question, hits, history or []), system_prompt(easy))
         return Answer(text, hits, q, cited_numbers(text, len(hits)), u)
 
-    def stream(self, question: str, hits: list[dict], history: list[dict] | None = None) -> Iterator[str]:
+    def stream(self, question: str, hits: list[dict], history: list[dict] | None = None,
+               easy: bool = False) -> Iterator[str]:
         """Streamlit 화면용 스트리밍. retrieve() 로 찾은 hits 를 넘겨준다."""
-        with self.client.messages.stream(model=self.model, max_tokens=1500, system=SYSTEM_PROMPT,
+        with self.client.messages.stream(model=self.model, max_tokens=1500, system=system_prompt(easy),
                                          messages=self._messages(question, hits, history or [])) as s:
             yield from s.text_stream
             final = s.get_final_message() if hasattr(s, "get_final_message") else None
